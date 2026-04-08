@@ -1,0 +1,1361 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<link rel="icon" type="image/png" href="data:image/png;base64,/9j/4AAQSkZJRgABAQAAAQABAAD/4gHYSUNDX1BST0ZJTEUAAQEAAAHIAAAAAAQwAABtbnRyUkdCIFhZWiAH4AABAAEAAAAAAABhY3NwAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAQAA9tYAAQAAAADTLQAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAlkZXNjAAAA8AAAACRyWFlaAAABFAAAABRnWFlaAAABKAAAABRiWFlaAAABPAAAABR3dHB0AAABUAAAABRyVFJDAAABZAAAAChnVFJDAAABZAAAAChiVFJDAAABZAAAAChjcHJ0AAABjAAAADxtbHVjAAAAAAAAAAEAAAAMZW5VUwAAAAgAAAAcAHMAUgBHAEJYWVogAAAAAAAAb6IAADj1AAADkFhZWiAAAAAAAABimQAAt4UAABjaWFlaIAAAAAAAACSgAAAPhAAAts9YWVogAAAAAAAA9tYAAQAAAADTLXBhcmEAAAAAAAQAAAACZmYAAPKnAAANWQAAE9AAAApbAAAAAAAAAABtbHVjAAAAAAAAAAEAAAAMZW5VUwAAACAAAAAcAEcAbwBvAGcAbABlACAASQBuAGMALgAgADIAMAAxADb/2wBDAAUDBAQEAwUEBAQFBQUGBwwIBwcHBw8LCwkMEQ8SEhEPERETFhwXExQaFRERGCEYGh0dHx8fExciJCIeJBweHx7/2wBDAQUFBQcGBw4ICA4eFBEUHh4eHh4eHh4eHh4eHh4eHh4eHh4eHh4eHh4eHh4eHh4eHh4eHh4eHh4eHh4eHh4eHh7/wAARCAAgACADASIAAhEBAxEB/8QAGgAAAgMBAQAAAAAAAAAAAAAAAAYFBwgBBP/EACkQAAEEAQMDAwUBAQAAAAAAAAECAwQFEQAGEiExQRMUMgcIIlGBFmH/xAAWAQEBAQAAAAAAAAAAAAAAAAADAgT/xAAhEQABAwMEAwAAAAAAAAAAAAABAAIRAxITIjFBcSEjof/aAAwDAQACEQMRAD8A1/c2tZSwFz7ewiwIqCAp6Q6G0AnsMnyfA865S21XdwEz6iwiz4qiQHo7ocTkdxkeR5HjWfPvhhbxlVO33Ns1tlLiMiWuc7EZUv244tkLJT8PxDg5foqGRnUd9mzW/avbG7Z9rR2amzCYfqky21N+/WEOqHFSvlkFtPP9cRk4GnFD1Xygyvy2x4WodGqiT9S90w0QY/8Al5l3Ikwi8483Vy4KGnyvAZUlaFkAYUCrOegOOuraZLhZQXgkOcRzCTkA+cZ8aJzC3dMHApV+pJmP1b9Sw622iyrpkVPqEJQp9TWGwVH45yrXj2NHshtJO3PctBcCjiwebS+SG5IZKV4Wnvg8e3bTrJjsSWVMyWW3mlfJDiQpJ/h0RY7EVlLMZhtlpPZDaQlI/g1GrbhZsNTLddpmfkR1z2kWt21vGOliKq7bbhpbKHPTkrLmC4FdCUYBCQpIICeiu3TU9s6quav3gtZ7UsPuBxv08jiSPzyMeVZOf+4wMdWDRqy8laQ2F//Z">
+<title>Portal de Credenciamento – CarBank / VWFS</title>
+
+<!-- jsPDF + AutoTable -->
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf-autotable/3.8.2/jspdf.plugin.autotable.min.js"></script>
+<!-- SheetJS -->
+<script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
+
+<style>
+  :root {
+    --verde:     #2ecc71;
+    --verde-esc: #1aac5c;
+    --azul-esc:  #0d1b3e;
+    --azul-med:  #1a2f5e;
+    --branco:    #ffffff;
+    --cinza-bg:  #f4f6f9;
+    --cinza-brd: #d1d9e6;
+    --cinza-txt: #4a5568;
+    --erro:      #e53e3e;
+    --sombra:    0 4px 20px rgba(13,27,62,.12);
+    --radius:    10px;
+  }
+
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  body {
+    font-family: 'Segoe UI', system-ui, sans-serif;
+    background: var(--cinza-bg);
+    color: var(--azul-esc);
+    min-height: 100vh;
+  }
+
+  /* ── HEADER ────────────────────────────── */
+  header {
+    background: var(--branco);
+    border-bottom: 3px solid var(--verde);
+    padding: 0 32px;
+    height: 64px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    position: sticky; top: 0; z-index: 100;
+    box-shadow: 0 2px 12px rgba(0,0,0,.08);
+  }
+  .logo-wrap { display: flex; align-items: center; gap: 12px; }
+  .logo-wrap img { height: 40px; object-fit: contain; }
+  .logo-wrap .tagline {
+    font-size: 11px; color: var(--cinza-txt);
+    font-weight: 500; letter-spacing: .5px;
+    text-transform: uppercase;
+    border-left: 2px solid var(--cinza-brd);
+    padding-left: 12px;
+  }
+  .header-title {
+    font-size: 14px; font-weight: 700;
+    color: var(--azul-esc); letter-spacing: .3px;
+    text-align: center;
+  }
+  .header-badge {
+    background: var(--azul-esc); color: var(--branco);
+    font-size: 11px; font-weight: 600;
+    padding: 4px 12px; border-radius: 20px;
+    letter-spacing: .5px;
+  }
+
+  /* ── PROGRESS BAR ────────────────────────── */
+  .progress-wrap {
+    background: var(--branco);
+    border-bottom: 1px solid var(--cinza-brd);
+    padding: 0 32px;
+  }
+  .progress-steps {
+    display: flex; max-width: 960px; margin: 0 auto;
+  }
+  .step-tab {
+    flex: 1; padding: 14px 8px;
+    text-align: center; cursor: pointer;
+    font-size: 12px; font-weight: 600;
+    color: var(--cinza-txt);
+    border-bottom: 3px solid transparent;
+    transition: all .2s; position: relative;
+    text-transform: uppercase; letter-spacing: .4px;
+  }
+  .step-tab.active {
+    color: var(--verde-esc);
+    border-bottom-color: var(--verde);
+  }
+  .step-tab.done {
+    color: var(--verde-esc);
+  }
+  .step-tab.done::after {
+    content: ' ✓';
+    font-size: 10px;
+  }
+  .step-num {
+    display: inline-block;
+    width: 20px; height: 20px;
+    border-radius: 50%;
+    background: var(--cinza-brd);
+    color: var(--cinza-txt);
+    font-size: 10px;
+    line-height: 20px;
+    margin-right: 6px;
+    transition: all .2s;
+  }
+  .step-tab.active .step-num {
+    background: var(--verde);
+    color: white;
+  }
+  .step-tab.done .step-num {
+    background: var(--verde-esc);
+    color: white;
+  }
+
+  /* ── MAIN ──────────────────────────────── */
+  main { max-width: 960px; margin: 32px auto; padding: 0 24px 80px; }
+
+  /* ── SECTIONS ───────────────────────────── */
+  .section { display: none; }
+  .section.active { display: block; }
+
+  /* ── CARD ───────────────────────────────── */
+  .card {
+    background: var(--branco);
+    border-radius: var(--radius);
+    box-shadow: var(--sombra);
+    padding: 28px 32px;
+    margin-bottom: 20px;
+    border: 1px solid var(--cinza-brd);
+  }
+  .card-title {
+    font-size: 13px; font-weight: 700;
+    text-transform: uppercase; letter-spacing: .8px;
+    color: var(--azul-esc);
+    padding-bottom: 14px;
+    margin-bottom: 20px;
+    border-bottom: 2px solid var(--verde);
+    display: flex; align-items: center; gap: 8px;
+  }
+  .card-title .icon {
+    width: 28px; height: 28px;
+    background: linear-gradient(135deg, var(--verde), var(--verde-esc));
+    border-radius: 6px;
+    display: flex; align-items: center; justify-content: center;
+    font-size: 13px; color: white;
+  }
+
+  /* ── GRID FORM ─────────────────────────── */
+  .form-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; }
+  .form-grid.cols-3 { grid-template-columns: 1fr 1fr 1fr; }
+  .form-grid.cols-1 { grid-template-columns: 1fr; }
+  .span-2 { grid-column: span 2; }
+  .span-3 { grid-column: span 3; }
+
+  .field { display: flex; flex-direction: column; gap: 5px; }
+  .field label {
+    font-size: 11px; font-weight: 600;
+    color: var(--cinza-txt);
+    text-transform: uppercase; letter-spacing: .5px;
+  }
+  .field label .req { color: var(--erro); margin-left: 2px; }
+  .field input, .field select, .field textarea {
+    border: 1.5px solid var(--cinza-brd);
+    border-radius: 7px;
+    padding: 9px 13px;
+    font-size: 13.5px;
+    color: var(--azul-esc);
+    background: var(--branco);
+    transition: border-color .2s, box-shadow .2s;
+    font-family: inherit;
+    outline: none;
+  }
+  .field input:focus, .field select:focus, .field textarea:focus {
+    border-color: var(--verde);
+    box-shadow: 0 0 0 3px rgba(46,204,113,.15);
+  }
+  .field input.error { border-color: var(--erro); }
+  .field textarea { resize: vertical; min-height: 80px; }
+  .field .hint {
+    font-size: 10.5px; color: #999; font-style: italic;
+  }
+
+  /* ── DIVIDER ───────────────────────────── */
+  .sub-title {
+    font-size: 11px; font-weight: 700;
+    text-transform: uppercase; letter-spacing: .7px;
+    color: var(--azul-med); margin: 24px 0 12px;
+    display: flex; align-items: center; gap: 8px;
+  }
+  .sub-title::after {
+    content: ''; flex: 1; height: 1px; background: var(--cinza-brd);
+  }
+
+  /* ── BOTÕES ─────────────────────────────── */
+  .btn-row {
+    display: flex; justify-content: space-between;
+    align-items: center; margin-top: 28px; gap: 12px;
+  }
+  .btn {
+    padding: 11px 28px; border: none; border-radius: 8px;
+    font-size: 13.5px; font-weight: 600; cursor: pointer;
+    transition: all .2s; display: flex; align-items: center; gap: 8px;
+    letter-spacing: .3px;
+  }
+  .btn-primary {
+    background: linear-gradient(135deg, var(--verde), var(--verde-esc));
+    color: white; box-shadow: 0 4px 14px rgba(46,204,113,.35);
+  }
+  .btn-primary:hover { transform: translateY(-1px); box-shadow: 0 6px 18px rgba(46,204,113,.45); }
+  .btn-secondary {
+    background: var(--branco); color: var(--azul-esc);
+    border: 1.5px solid var(--cinza-brd);
+  }
+  .btn-secondary:hover { border-color: var(--verde); color: var(--verde-esc); }
+  .btn-dark {
+    background: var(--azul-esc); color: white;
+    box-shadow: 0 4px 14px rgba(13,27,62,.25);
+  }
+  .btn-dark:hover { transform: translateY(-1px); background: var(--azul-med); }
+  .btn-danger {
+    background: #fff0f0; color: var(--erro);
+    border: 1.5px solid #fca5a5;
+  }
+
+  /* ── DOWNLOAD SECTION ──────────────────── */
+  .download-grid {
+    display: grid; grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+    gap: 14px; margin-top: 16px;
+  }
+  .dl-card {
+    border: 1.5px solid var(--cinza-brd);
+    border-radius: 8px; padding: 16px;
+    text-align: center; cursor: pointer;
+    transition: all .2s;
+    background: var(--branco);
+  }
+  .dl-card:hover {
+    border-color: var(--verde);
+    box-shadow: 0 4px 14px rgba(46,204,113,.15);
+    transform: translateY(-2px);
+  }
+  .dl-icon { font-size: 28px; margin-bottom: 8px; }
+  .dl-name { font-size: 12px; font-weight: 700; color: var(--azul-esc); margin-bottom: 4px; }
+  .dl-type { font-size: 10px; color: #999; text-transform: uppercase; }
+
+  /* ── EMAIL PREVIEW ─────────────────────── */
+  .email-preview {
+    background: #f8fafc;
+    border: 1.5px solid var(--cinza-brd);
+    border-radius: 8px; padding: 24px;
+    font-size: 13px; line-height: 1.8;
+    white-space: pre-wrap;
+    font-family: 'Courier New', monospace;
+    color: #333;
+    position: relative;
+  }
+  .email-header-box {
+    background: var(--azul-esc); color: white;
+    border-radius: 8px; padding: 16px 20px;
+    margin-bottom: 16px;
+    display: grid; grid-template-columns: auto 1fr; gap: 6px 16px;
+    font-size: 12.5px;
+  }
+  .email-header-box .lbl { color: rgba(255,255,255,.6); font-weight: 600; }
+  .email-header-box .val { color: white; font-weight: 500; }
+
+  /* ── ALERT ──────────────────────────────── */
+  .alert {
+    padding: 12px 16px; border-radius: 8px;
+    font-size: 13px; margin-bottom: 16px;
+    display: flex; align-items: center; gap: 10px;
+  }
+  .alert-info { background: #eff6ff; color: #1e40af; border: 1px solid #bfdbfe; }
+  .alert-success { background: #f0fdf4; color: #166534; border: 1px solid #bbf7d0; }
+  .alert-warn { background: #fffbeb; color: #92400e; border: 1px solid #fde68a; }
+
+  /* ── RESUMO FINAL ──────────────────────── */
+  .resumo-table { width: 100%; border-collapse: collapse; font-size: 12.5px; }
+  .resumo-table tr:nth-child(even) { background: var(--cinza-bg); }
+  .resumo-table td { padding: 7px 12px; border-bottom: 1px solid var(--cinza-brd); }
+  .resumo-table td:first-child { font-weight: 600; color: var(--cinza-txt); width: 45%; }
+
+  /* ── COPY BTN ─────────────────────────── */
+  .copy-btn {
+    position: absolute; top: 12px; right: 12px;
+    background: var(--azul-esc); color: white;
+    border: none; border-radius: 6px;
+    padding: 6px 14px; font-size: 11px; cursor: pointer;
+    font-weight: 600;
+  }
+  .copy-btn:hover { background: var(--verde-esc); }
+
+  /* ── RESPONSIVE ─────────────────────────── */
+  @media (max-width: 640px) {
+    .form-grid { grid-template-columns: 1fr; }
+    .form-grid.cols-3 { grid-template-columns: 1fr; }
+    .span-2, .span-3 { grid-column: span 1; }
+    main { padding: 0 16px 60px; }
+    header { padding: 0 16px; }
+    .header-title { display: none; }
+    .progress-wrap { padding: 0 16px; }
+    .step-tab { font-size: 10px; padding: 12px 4px; }
+  }
+</style>
+</head>
+<body>
+
+<!-- HEADER -->
+<header>
+  <div class="logo-wrap">
+    <img src="data:image/jpeg;base64,/9j/4AAQSkZJRgABAQEAYABgAAD/4QA6RXhpZgAATU0AKgAAAAgAA1EQAAEAAAABAQAAAFERAAQAAAABAAAOxFESAAQAAAABAAAOxAAAAAD/2wBDAAIBAQIBAQICAgICAgICAwUDAwMDAwYEBAMFBwYHBwcGBwcICQsJCAgKCAcHCg0KCgsMDAwMBwkODw0MDgsMDAz/2wBDAQICAgMDAwYDAwYMCAcIDAwMDAwMDAwMDAwMDAwMDAwMDAwMDAwMDAwMDAwMDAwMDAwMDAwMDAwMDAwMDAwMDAz/wAARCAFGAYgDASIAAhEBAxEB/8QAHwAAAQUBAQEBAQEAAAAAAAAAAAECAwQFBgcICQoL/8QAtRAAAgEDAwIEAwUFBAQAAAF9AQIDAAQRBRIhMUEGE1FhByJxFDKBkaEII0KxwRVS0fAkM2JyggkKFhcYGRolJicoKSo0NTY3ODk6Q0RFRkdISUpTVFVWV1hZWmNkZWZnaGlqc3R1dnd4eXqDhIWGh4iJipKTlJWWl5iZmqKjpKWmp6ipqrKztLW2t7i5usLDxMXGx8jJytLT1NXW19jZ2uHi4+Tl5ufo6erx8vP09fb3+Pn6/8QAHwEAAwEBAQEBAQEBAQAAAAAAAAECAwQFBgcICQoL/8QAtREAAgECBAQDBAcFBAQAAQJ3AAECAxEEBSExBhJBUQdhcRMiMoEIFEKRobHBCSMzUvAVYnLRChYkNOEl8RcYGRomJygpKjU2Nzg5OkNERUZHSElKU1RVVldYWVpjZGVmZ2hpanN0dXZ3eHl6goOEhYaHiImKkpOUlZaXmJmaoqOkpaanqKmqsrO0tba3uLm6wsPExcbHyMnK0tPU1dbX2Nna4uPk5ebn6Onq8vP09fb3+Pn6/9oADAMBAAIRAxEAPwD9/KKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAoooo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" alt="CarBank">
+    <div class="tagline">Portal de Credenciamento</div>
+  </div>
+  <div class="header-title">Credenciamento de Novos Pontos de Venda – VWFS</div>
+  <div class="header-badge">VWFS</div>
+</header>
+
+<!-- PROGRESS -->
+<div class="progress-wrap">
+  <div class="progress-steps">
+    <div class="step-tab active" onclick="goTo(0)" id="tab0">
+      <span class="step-num">1</span>Dados da Loja
+    </div>
+    <div class="step-tab" onclick="goTo(1)" id="tab1">
+      <span class="step-num">2</span>Representante
+    </div>
+    <div class="step-tab" onclick="goTo(2)" id="tab2">
+      <span class="step-num">3</span>GCM / Banco
+    </div>
+    <div class="step-tab" onclick="goTo(3)" id="tab3">
+      <span class="step-num">4</span>Documentos
+    </div>
+    <div class="step-tab" onclick="goTo(4)" id="tab4">
+      <span class="step-num">5</span>E-mail / Input
+    </div>
+  </div>
+</div>
+
+<main>
+
+<!-- ═══════════════════════════════════════════════════════
+     SEÇÃO 1 — DADOS DA LOJA
+═══════════════════════════════════════════════════════ -->
+<div class="section active" id="sec0">
+  <div class="alert alert-info">
+    ℹ️ Preencha todos os campos obrigatórios (<span style="color:var(--erro)">*</span>) antes de avançar. As informações serão usadas para gerar todos os documentos automaticamente.
+  </div>
+
+  <div class="card">
+    <div class="card-title"><div class="icon">🏢</div> Identificação da Empresa</div>
+    <div class="form-grid">
+      <div class="field span-2">
+        <label>Razão Social (máx. 40 caracteres) <span class="req">*</span></label>
+        <input type="text" id="razaoSocial" maxlength="40" placeholder="Ex: JOAO DA SILVA VEÍCULOS LTDA">
+        <span class="hint" id="rsCount">0 / 40 caracteres</span>
+      </div>
+      <div class="field">
+        <label>CNPJ <span class="req">*</span></label>
+        <input type="text" id="cnpj" placeholder="00.000.000/0000-00" maxlength="18">
+      </div>
+      <div class="field">
+        <label>CNAE <span class="req">*</span></label>
+        <input type="text" id="cnae" placeholder="45.11-1-02">
+      </div>
+      <div class="field span-2">
+        <label>Ramo de Atividade <span class="req">*</span></label>
+        <input type="text" id="ramoAtividade" placeholder="Comércio a varejo de automóveis, camionetas e utilitários usados">
+      </div>
+      <div class="field span-2">
+        <label>Atividade Principal <span class="req">*</span></label>
+        <input type="text" id="atividadePrincipal" placeholder="45.11-1-02 – Comércio a varejo de automóveis...">
+      </div>
+      <div class="field">
+        <label>Data de Constituição <span class="req">*</span></label>
+        <input type="date" id="dataConstituicao">
+      </div>
+      <div class="field">
+        <label>Forma de Constituição</label>
+        <select id="formaConstituicao">
+          <option value="">Selecione...</option>
+          <option>Sociedade Limitada (LTDA)</option>
+          <option>Sociedade Anônima (S.A.)</option>
+          <option>MEI (Microempreendedor Individual)</option>
+          <option>Empresário Individual</option>
+          <option>EIRELI (Empresa Indiv. Respons. Limitada)</option>
+        </select>
+      </div>
+      <div class="field">
+        <label>E-mail da Loja <span class="req">*</span></label>
+        <input type="email" id="emailLoja" placeholder="contato@loja.com.br">
+      </div>
+      <div class="field">
+        <label>Inscrição Estadual</label>
+        <input type="text" id="inscricaoEstadual" placeholder="000.000.000.000">
+      </div>
+    </div>
+
+    <div class="sub-title">Endereço da Loja</div>
+    <div class="form-grid cols-3">
+      <div class="field span-2">
+        <label>Logradouro <span class="req">*</span></label>
+        <input type="text" id="endLoja" placeholder="Av. Nordestina">
+      </div>
+      <div class="field">
+        <label>Número <span class="req">*</span></label>
+        <input type="text" id="numLoja" placeholder="1540">
+      </div>
+      <div class="field">
+        <label>Complemento <span class="hint">(máx. 8 car.)</span></label>
+        <input type="text" id="complLoja" maxlength="8" placeholder="Sala 1">
+      </div>
+      <div class="field">
+        <label>Bairro <span class="req">*</span></label>
+        <input type="text" id="bairroLoja" placeholder="Vila Americana">
+      </div>
+      <div class="field">
+        <label>CEP <span class="req">*</span></label>
+        <input type="text" id="cepLoja" placeholder="00000-000" maxlength="9">
+      </div>
+      <div class="field">
+        <label>Cidade <span class="req">*</span></label>
+        <input type="text" id="cidadeLoja" placeholder="São Paulo">
+      </div>
+      <div class="field">
+        <label>UF <span class="req">*</span></label>
+        <select id="estadoLoja">
+          <option value="">UF</option>
+          <option>AC</option><option>AL</option><option>AM</option><option>AP</option>
+          <option>BA</option><option>CE</option><option>DF</option><option>ES</option>
+          <option>GO</option><option>MA</option><option>MG</option><option>MS</option>
+          <option>MT</option><option>PA</option><option>PB</option><option>PE</option>
+          <option>PI</option><option>PR</option><option>RJ</option><option>RN</option>
+          <option>RO</option><option>RR</option><option>RS</option><option>SC</option>
+          <option selected>SP</option><option>SE</option><option>TO</option>
+        </select>
+      </div>
+    </div>
+
+    <div class="sub-title">Telefone</div>
+    <div class="form-grid">
+      <div class="field">
+        <label>DDD <span class="req">*</span></label>
+        <input type="text" id="dddLoja" maxlength="3" placeholder="011">
+      </div>
+      <div class="field">
+        <label>Telefone <span class="req">*</span></label>
+        <input type="text" id="telLoja" placeholder="4301-2628" maxlength="10">
+      </div>
+    </div>
+
+    <div class="sub-title">Informações Comerciais</div>
+    <div class="form-grid cols-3">
+      <div class="field">
+        <label>Prédio Próprio? <span class="req">*</span></label>
+        <select id="predioProprio">
+          <option value="Sim">Sim</option>
+          <option value="Não" selected>Não</option>
+        </select>
+      </div>
+      <div class="field">
+        <label>Estoque (Qtd.) <span class="req">*</span></label>
+        <input type="number" id="estoqueQtd" placeholder="25" min="0">
+      </div>
+      <div class="field">
+        <label>Vlr. Estoque (R$) <span class="req">*</span></label>
+        <input type="number" id="estoqueVlr" placeholder="1250000" min="0">
+      </div>
+      <div class="field">
+        <label>Vendas / mês <span class="req">*</span></label>
+        <input type="number" id="vendasMes" placeholder="15" min="0">
+      </div>
+      <div class="field">
+        <label>Financ. / mês <span class="req">*</span></label>
+        <input type="number" id="financMes" placeholder="13" min="0">
+      </div>
+      <div class="field">
+        <label>Qtd. Bancos na loja <span class="req">*</span></label>
+        <input type="number" id="qtdBancos" placeholder="7" min="0">
+      </div>
+      <div class="field">
+        <label>Patrimônio dos Sócios (R$) <span class="req">*</span></label>
+        <input type="number" id="patrimonio" placeholder="1500000" min="0">
+      </div>
+      <div class="field">
+        <label>Faturamento Mensal (R$)</label>
+        <input type="number" id="faturamento" placeholder="500000" min="0">
+      </div>
+      <div class="field span-3">
+        <label>Comentários Gerais para Defesa</label>
+        <textarea id="comentarios" placeholder="Informações adicionais relevantes para análise..."></textarea>
+      </div>
+    </div>
+  </div>
+
+  <div class="btn-row">
+    <div></div>
+    <button class="btn btn-primary" onclick="nextSection(0)">
+      Próximo: Representante Legal →
+    </button>
+  </div>
+</div>
+
+<!-- ═══════════════════════════════════════════════════════
+     SEÇÃO 2 — REPRESENTANTE LEGAL
+═══════════════════════════════════════════════════════ -->
+<div class="section" id="sec1">
+  <div class="card">
+    <div class="card-title"><div class="icon">👤</div> Representante Legal / Correspondente</div>
+    <div class="form-grid">
+      <div class="field span-2">
+        <label>Nome Completo <span class="req">*</span></label>
+        <input type="text" id="repNome" placeholder="FABIO ANTONIO VIEIRA">
+      </div>
+      <div class="field">
+        <label>E-mail <span class="req">*</span></label>
+        <input type="email" id="repEmail" placeholder="fabio@email.com">
+      </div>
+      <div class="field">
+        <label>CPF <span class="req">*</span></label>
+        <input type="text" id="repCpf" placeholder="000.000.000-00" maxlength="14">
+      </div>
+      <div class="field">
+        <label>RG <span class="req">*</span></label>
+        <input type="text" id="repRg" placeholder="00.000.000-0">
+      </div>
+      <div class="field">
+        <label>Órgão Expedidor <span class="req">*</span></label>
+        <input type="text" id="repOrgao" placeholder="SSP SP">
+      </div>
+      <div class="field">
+        <label>Data de Nascimento <span class="req">*</span></label>
+        <input type="date" id="repDtNasc">
+      </div>
+      <div class="field">
+        <label>Naturalidade</label>
+        <input type="text" id="repNaturalidade" placeholder="São Paulo">
+      </div>
+      <div class="field">
+        <label>Nacionalidade</label>
+        <select id="repNacionalidade">
+          <option>Brasileira</option>
+          <option>Estrangeira</option>
+        </select>
+      </div>
+      <div class="field">
+        <label>Sexo</label>
+        <select id="repSexo">
+          <option>Masculino</option>
+          <option>Feminino</option>
+        </select>
+      </div>
+      <div class="field">
+        <label>Estado Civil</label>
+        <select id="repEstCivil">
+          <option>Solteiro (a)</option>
+          <option>Casado (a)</option>
+          <option>Separado (a)</option>
+          <option>Divorciado (a)</option>
+          <option>Viúvo (a)</option>
+        </select>
+      </div>
+      <div class="field">
+        <label>Profissão <span class="req">*</span></label>
+        <input type="text" id="repProfissao" placeholder="Empresário">
+      </div>
+      <div class="field">
+        <label>Renda Mensal (R$) <span class="req">*</span></label>
+        <input type="number" id="repRenda" placeholder="18000" min="0">
+      </div>
+      <div class="field span-2">
+        <label>Filiação (Nome da Mãe)</label>
+        <input type="text" id="repMae" placeholder="Maria da Silva">
+      </div>
+      <div class="field">
+        <label>Celular</label>
+        <input type="text" id="repCelular" placeholder="(11) 94721-6062" maxlength="16">
+      </div>
+      <div class="field">
+        <label>Assina</label>
+        <select id="repAssina">
+          <option value="I">Isoladamente (I)</option>
+          <option value="C">Em Conjunto (C)</option>
+        </select>
+      </div>
+    </div>
+
+    <div class="sub-title">Endereço Residencial</div>
+    <div class="form-grid cols-3">
+      <div class="field span-2">
+        <label>Logradouro <span class="req">*</span></label>
+        <input type="text" id="repEnd" placeholder="Rua Antonio Augusto Portugal">
+      </div>
+      <div class="field">
+        <label>Número <span class="req">*</span></label>
+        <input type="text" id="repNum" placeholder="69">
+      </div>
+      <div class="field">
+        <label>Complemento</label>
+        <input type="text" id="repCompl" placeholder="Ap 12">
+      </div>
+      <div class="field">
+        <label>Bairro <span class="req">*</span></label>
+        <input type="text" id="repBairro" placeholder="Vila Arruda">
+      </div>
+      <div class="field">
+        <label>CEP <span class="req">*</span></label>
+        <input type="text" id="repCep" placeholder="03712-050" maxlength="9">
+      </div>
+      <div class="field">
+        <label>Cidade <span class="req">*</span></label>
+        <input type="text" id="repCidade" placeholder="São Paulo">
+      </div>
+      <div class="field">
+        <label>Estado <span class="req">*</span></label>
+        <select id="repEstado">
+          <option>SP</option><option>RJ</option><option>MG</option><option>PR</option>
+          <option>RS</option><option>SC</option><option>BA</option><option>DF</option>
+          <option>GO</option><option>ES</option><option>CE</option><option>PE</option>
+        </select>
+      </div>
+    </div>
+  </div>
+
+  <div class="btn-row">
+    <button class="btn btn-secondary" onclick="prevSection(1)">← Voltar</button>
+    <button class="btn btn-primary" onclick="nextSection(1)">Próximo: GCM / Banco →</button>
+  </div>
+</div>
+
+<!-- ═══════════════════════════════════════════════════════
+     SEÇÃO 3 — GCM / BANCO
+═══════════════════════════════════════════════════════ -->
+<div class="section" id="sec2">
+  <div class="card">
+    <div class="card-title"><div class="icon">🏦</div> Dados do GCM / GR</div>
+    <div class="form-grid">
+      <div class="field span-2">
+        <label>Nome Completo GCM / GR <span class="req">*</span></label>
+        <input type="text" id="gcmNome" placeholder="Nome completo do gerente">
+      </div>
+      <div class="field">
+        <label>E-mail GCM/GR <span class="req">*</span></label>
+        <input type="email" id="gcmEmail" placeholder="gerente@vwfs.com">
+      </div>
+      <div class="field">
+        <label>Chapa GCM/GR <span class="req">*</span></label>
+        <input type="text" id="gcmChapa" placeholder="GCM-0001">
+      </div>
+      <div class="field">
+        <label>Regional <span class="req">*</span></label>
+        <input type="text" id="gcmRegional" placeholder="SP">
+      </div>
+      <div class="field">
+        <label>Chapa Coordenador</label>
+        <input type="text" id="gcmCoord" placeholder="COORD-0001">
+      </div>
+      <div class="field">
+        <label>Tipo Loja</label>
+        <select id="tipoLoja">
+          <option value="">Selecione...</option>
+          <option>Loja Isolada</option>
+          <option>Rede / Grupo</option>
+          <option>Concessionária</option>
+        </select>
+      </div>
+    </div>
+  </div>
+
+  <div class="card">
+    <div class="card-title"><div class="icon">💳</div> Dados Bancários (para pagamentos)</div>
+    <div class="form-grid cols-3">
+      <div class="field span-3">
+        <label>Nome do Banco <span class="req">*</span></label>
+        <input type="text" id="bancNome" placeholder="Banco do Brasil">
+      </div>
+      <div class="field">
+        <label>Nº do Banco <span class="req">*</span></label>
+        <input type="text" id="bancCod" placeholder="001">
+      </div>
+      <div class="field">
+        <label>Agência (sem dígito) <span class="req">*</span></label>
+        <input type="text" id="bancAgencia" placeholder="0001">
+        <span class="hint">Não inclua o dígito da agência</span>
+      </div>
+      <div class="field">
+        <label>Conta Corrente (c/ dígito) <span class="req">*</span></label>
+        <input type="text" id="bancConta" placeholder="00001-0">
+        <span class="hint">Inclua o dígito verificador</span>
+      </div>
+    </div>
+  </div>
+
+  <div class="card">
+    <div class="card-title"><div class="icon">✉️</div> E-mail do Gestor (Solicitação)</div>
+    <div class="form-grid">
+      <div class="field">
+        <label>E-mail do Gestor <span class="req">*</span></label>
+        <input type="email" id="emailGestor" placeholder="gestor@vwfs.com" value="hermes.junior@vwfs.com">
+      </div>
+      <div class="field">
+        <label>Motivo</label>
+        <select id="motivoCadastro">
+          <option>Novo Cadastro</option>
+          <option>Reativação</option>
+        </select>
+      </div>
+    </div>
+  </div>
+
+  <div class="btn-row">
+    <button class="btn btn-secondary" onclick="prevSection(2)">← Voltar</button>
+    <button class="btn btn-primary" onclick="nextSection(2)">Próximo: Documentos →</button>
+  </div>
+</div>
+
+<!-- ═══════════════════════════════════════════════════════
+     SEÇÃO 4 — DOCUMENTOS PDF
+═══════════════════════════════════════════════════════ -->
+<div class="section" id="sec3">
+  <div class="alert alert-success">
+    ✅ Todos os dados foram processados. Clique em cada documento para baixar o PDF correspondente, ou use "Baixar Tudo" para obter um arquivo ZIP com todos os PDFs.
+  </div>
+
+  <div class="card">
+    <div class="card-title"><div class="icon">📄</div> Documentos Gerados</div>
+    <div class="download-grid">
+      <div class="dl-card" onclick="gerarPDF_Cadastral()">
+        <div class="dl-icon">📋</div>
+        <div class="dl-name">1. Ficha Cadastral PJ</div>
+        <div class="dl-type">PDF</div>
+      </div>
+      <div class="dl-card" onclick="gerarPDF_Compromisso()">
+        <div class="dl-icon">🤝</div>
+        <div class="dl-name">2. Termo de Compromisso</div>
+        <div class="dl-type">PDF</div>
+      </div>
+      <div class="dl-card" onclick="gerarPDF_Acelera()">
+        <div class="dl-icon">🚀</div>
+        <div class="dl-name">3. Termo Acelera</div>
+        <div class="dl-type">PDF</div>
+      </div>
+      <div class="dl-card" onclick="gerarPDF_WL()">
+        <div class="dl-icon">📜</div>
+        <div class="dl-name">4. Contrato WL Correspondente</div>
+        <div class="dl-type">PDF</div>
+      </div>
+    </div>
+    <div style="margin-top:20px; display:flex; gap:12px; flex-wrap:wrap;">
+      <button class="btn btn-dark" onclick="baixarTodos()">
+        ⬇ Baixar Todos os PDFs
+      </button>
+    </div>
+  </div>
+
+  <div class="card">
+    <div class="card-title"><div class="icon">👁️</div> Resumo dos Dados</div>
+    <table class="resumo-table" id="resumoTable"></table>
+  </div>
+
+  <div class="btn-row">
+    <button class="btn btn-secondary" onclick="prevSection(3)">← Voltar</button>
+    <button class="btn btn-primary" onclick="nextSection(3)">Próximo: E-mail / Input →</button>
+  </div>
+</div>
+
+<!-- ═══════════════════════════════════════════════════════
+     SEÇÃO 5 — EMAIL + INPUT EXCEL
+═══════════════════════════════════════════════════════ -->
+<div class="section" id="sec4">
+
+  <div class="card">
+    <div class="card-title"><div class="icon">✉️</div> E-mail de Solicitação ao Gestor</div>
+    <div class="alert alert-warn">
+      ⚠️ Este e-mail já está formatado para envio. Copie o conteúdo ou use o botão "Abrir no Gmail".
+    </div>
+    <div class="email-header-box">
+      <span class="lbl">Para:</span>     <span class="val" id="em_para"></span>
+      <span class="lbl">Assunto:</span>  <span class="val" id="em_assunto"></span>
+      <span class="lbl">Motivo:</span>   <span class="val" id="em_motivo"></span>
+    </div>
+    <div class="email-preview" id="emailCorpo">
+      <button class="copy-btn" onclick="copiarEmail()">📋 Copiar</button>
+    </div>
+    <div style="margin-top:14px; display:flex; gap:10px; flex-wrap:wrap;">
+      <button class="btn btn-primary" onclick="abrirGmail()">📨 Abrir no Gmail</button>
+      <button class="btn btn-secondary" onclick="copiarEmail()">📋 Copiar Texto</button>
+    </div>
+  </div>
+
+  <div class="card">
+    <div class="card-title"><div class="icon">📊</div> Planilha Input (Excel)</div>
+    <p style="font-size:13px; color:var(--cinza-txt); margin-bottom:16px;">
+      Exporta a aba <strong>Input</strong> com todos os dados preenchidos, no mesmo formato esperado pelo sistema VWFS.
+    </p>
+    <button class="btn btn-dark" onclick="baixarExcel()">
+      ⬇ Baixar Input.xlsx
+    </button>
+  </div>
+
+  <div class="card" style="text-align:center; padding:36px;">
+    <div style="font-size:48px; margin-bottom:16px;">🎉</div>
+    <div style="font-size:18px; font-weight:700; color:var(--azul-esc); margin-bottom:8px;">
+      Credenciamento Concluído!
+    </div>
+    <div style="font-size:13px; color:var(--cinza-txt); margin-bottom:24px;">
+      Todos os documentos foram gerados. Envie o e-mail ao gestor e encaminhe os PDFs para assinatura digital.
+    </div>
+    <button class="btn btn-secondary" onclick="novoPreenchimento()" style="margin:0 auto;">
+      ↩ Novo Preenchimento
+    </button>
+  </div>
+
+</div>
+
+</main>
+
+<script>
+// ══════════════════════════════════════════════════════
+//  ESTADO GLOBAL
+// ══════════════════════════════════════════════════════
+let currentSection = 0;
+const totalSections = 5;
+
+// ── NAVEGAÇÃO ─────────────────────────────────────────
+function goTo(idx) {
+  document.querySelectorAll('.section').forEach((s, i) => {
+    s.classList.toggle('active', i === idx);
+  });
+  document.querySelectorAll('.step-tab').forEach((t, i) => {
+    t.classList.remove('active', 'done');
+    if (i < idx) t.classList.add('done');
+    else if (i === idx) t.classList.add('active');
+  });
+  currentSection = idx;
+  if (idx === 3) buildResumo();
+  if (idx === 4) buildEmail();
+  window.scrollTo({ top: 0, behavior: 'smooth' });
+}
+
+function nextSection(from) {
+  if (from === 0 && !validarSec0()) return;
+  if (from === 1 && !validarSec1()) return;
+  if (from === 2 && !validarSec2()) return;
+  goTo(from + 1);
+}
+function prevSection(from) { goTo(from - 1); }
+
+// ── VALIDAÇÃO ──────────────────────────────────────────
+function req(id) {
+  const el = document.getElementById(id);
+  const ok = el && el.value.trim() !== '';
+  if (el) el.classList.toggle('error', !ok);
+  return ok;
+}
+function validarSec0() {
+  return [req('razaoSocial'), req('cnpj'), req('cnae'), req('ramoAtividade'),
+          req('atividadePrincipal'), req('dataConstituicao'), req('emailLoja'),
+          req('endLoja'), req('numLoja'), req('bairroLoja'), req('cepLoja'),
+          req('cidadeLoja'), req('estadoLoja'), req('dddLoja'), req('telLoja'),
+          req('estoqueQtd'), req('estoqueVlr'), req('vendasMes'),
+          req('financMes'), req('qtdBancos'), req('patrimonio')
+         ].every(Boolean);
+}
+function validarSec1() {
+  return [req('repNome'), req('repEmail'), req('repCpf'), req('repRg'),
+          req('repOrgao'), req('repDtNasc'), req('repProfissao'), req('repRenda'),
+          req('repEnd'), req('repNum'), req('repBairro'), req('repCep'),
+          req('repCidade'), req('repEstado')].every(Boolean);
+}
+function validarSec2() {
+  return [req('gcmNome'), req('gcmEmail'), req('gcmChapa'), req('gcmRegional'),
+          req('emailGestor'), req('bancNome'), req('bancCod'),
+          req('bancAgencia'), req('bancConta')].every(Boolean);
+}
+
+// ── HELPERS ─────────────────────────────────────────────
+function v(id) {
+  const el = document.getElementById(id);
+  return el ? el.value.trim() : '';
+}
+function fmtData(s) {
+  if (!s) return '';
+  const [y, m, d] = s.split('-');
+  return `${d}/${m}/${y}`;
+}
+function fmtMoeda(n) {
+  if (!n) return '';
+  return 'R$ ' + parseFloat(n).toLocaleString('pt-BR', { minimumFractionDigits: 2 });
+}
+function tempoAtividade(dtStr) {
+  if (!dtStr) return '';
+  const dt = new Date(dtStr);
+  const hoje = new Date();
+  const diffMs = hoje - dt;
+  const anos = Math.floor(diffMs / (365.25 * 24 * 3600 * 1000));
+  const meses = Math.floor((diffMs % (365.25 * 24 * 3600 * 1000)) / (30.44 * 24 * 3600 * 1000));
+  return `${anos} ano(s) e ${meses} mês(es)`;
+}
+
+// Contador Razão Social
+document.getElementById('razaoSocial').addEventListener('input', function() {
+  document.getElementById('rsCount').textContent = this.value.length + ' / 40 caracteres';
+});
+
+// ══════════════════════════════════════════════════════
+//  RESUMO
+// ══════════════════════════════════════════════════════
+function buildResumo() {
+  const rows = [
+    ['DADOS DA EMPRESA', ''],
+    ['Razão Social', v('razaoSocial')],
+    ['CNPJ', v('cnpj')],
+    ['CNAE', v('cnae')],
+    ['Data Constituição', fmtData(v('dataConstituicao'))],
+    ['Forma Constituição', v('formaConstituicao')],
+    ['E-mail Loja', v('emailLoja')],
+    ['Endereço', `${v('endLoja')}, ${v('numLoja')} – ${v('bairroLoja')}, ${v('cidadeLoja')}/${v('estadoLoja')}`],
+    ['Telefone', `(${v('dddLoja')}) ${v('telLoja')}`],
+    ['Prédio Próprio', v('predioProprio')],
+    ['Estoque (Qtd)', v('estoqueQtd')],
+    ['Vlr. Estoque', fmtMoeda(v('estoqueVlr'))],
+    ['Vendas / mês', v('vendasMes')],
+    ['Financiamentos / mês', v('financMes')],
+    ['Qtd. Bancos', v('qtdBancos')],
+    ['Patrimônio', fmtMoeda(v('patrimonio'))],
+    ['REPRESENTANTE LEGAL', ''],
+    ['Nome', v('repNome')],
+    ['CPF', v('repCpf')],
+    ['RG', v('repRg') + ' ' + v('repOrgao')],
+    ['Dt. Nascimento', fmtData(v('repDtNasc'))],
+    ['Profissão', v('repProfissao')],
+    ['Renda', fmtMoeda(v('repRenda'))],
+    ['GCM / GR', ''],
+    ['Nome GCM', v('gcmNome')],
+    ['E-mail GCM', v('gcmEmail')],
+    ['Regional', v('gcmRegional')],
+    ['BANCO', ''],
+    ['Banco', `${v('bancCod')} – ${v('bancNome')}`],
+    ['Agência', v('bancAgencia')],
+    ['Conta', v('bancConta')],
+  ];
+  const tb = document.getElementById('resumoTable');
+  tb.innerHTML = rows.map(([k, val]) => {
+    if (val === '') return `<tr><td colspan="2" style="background:var(--azul-esc);color:white;font-weight:700;padding:8px 12px;font-size:11px;letter-spacing:.8px;">${k}</td></tr>`;
+    return `<tr><td>${k}</td><td>${val}</td></tr>`;
+  }).join('');
+}
+
+// ══════════════════════════════════════════════════════
+//  E-MAIL
+// ══════════════════════════════════════════════════════
+function buildEmail() {
+  const para = v('emailGestor');
+  const assunto = `${v('motivoCadastro')} – ${v('razaoSocial')} – CNPJ: ${v('cnpj')}`;
+  const motivo = v('motivoCadastro');
+  const hoje = new Date().toLocaleDateString('pt-BR');
+
+  document.getElementById('em_para').textContent = para;
+  document.getElementById('em_assunto').textContent = assunto;
+  document.getElementById('em_motivo').textContent = motivo;
+
+  const corpo = `FORMULÁRIO PARA CREDENCIAMENTO DE NOVOS PONTOS DE VENDA
+Data: ${hoje}
+
+Gerente Comercial Multicanais: ${v('gcmNome')}
+Nome da Loja: ${v('razaoSocial')}
+CNPJ: ${v('cnpj')}
+Cidade: ${v('cidadeLoja')} – ${v('estadoLoja')}
+
+1.  Tempo de atividade da loja: ${tempoAtividade(v('dataConstituicao'))}
+2.  Prédio próprio (sim ou não): ${v('predioProprio')}
+3.  Estoque da loja (quantidade): ${v('estoqueQtd')} veículos
+    a. Valor do estoque próprio e consignado: ${fmtMoeda(v('estoqueVlr'))}
+    b. Quantidade de vendas mês: ${v('vendasMes')}
+    c. Quantidade de financiamentos mês: ${v('financMes')}
+4.  Quantidade de Bancos que operam na loja: ${v('qtdBancos')}
+5.  Pessoa com Certificado de Correspondente no país e da LGPD:
+    ${v('repNome')} – CPF ${v('repCpf')}
+6.  Patrimônio dos Sócios: ${fmtMoeda(v('patrimonio'))}
+7.  Comentários gerais para defesa: ${v('comentarios') || '—'}
+
+Atenciosamente,
+${v('gcmNome')}
+${v('gcmEmail')}`;
+
+  const el = document.getElementById('emailCorpo');
+  el.innerHTML = `<button class="copy-btn" onclick="copiarEmail()">📋 Copiar</button>` + corpo;
+  el._corpo = corpo;
+}
+
+function copiarEmail() {
+  const el = document.getElementById('emailCorpo');
+  const txt = el._corpo || el.innerText.replace('📋 Copiar', '').trim();
+  navigator.clipboard.writeText(txt).then(() => {
+    const btn = el.querySelector('.copy-btn');
+    if (btn) { btn.textContent = '✅ Copiado!'; setTimeout(() => btn.textContent = '📋 Copiar', 2000); }
+  });
+}
+
+function abrirGmail() {
+  const para = encodeURIComponent(v('emailGestor'));
+  const assunto = encodeURIComponent(`${v('motivoCadastro')} – ${v('razaoSocial')} – CNPJ: ${v('cnpj')}`);
+  const el = document.getElementById('emailCorpo');
+  const corpo = encodeURIComponent(el._corpo || '');
+  window.open(`https://mail.google.com/mail/?view=cm&to=${para}&su=${assunto}&body=${corpo}`, '_blank');
+}
+
+// ══════════════════════════════════════════════════════
+//  GERAÇÃO DE PDFs
+// ══════════════════════════════════════════════════════
+function pdfBase() {
+  const { jsPDF } = window.jspdf;
+  const doc = new jsPDF({ orientation: 'portrait', unit: 'mm', format: 'a4' });
+  doc.setFont('helvetica');
+  return doc;
+}
+
+function addHeader(doc, titulo) {
+  doc.setFillColor(13, 27, 62);
+  doc.rect(0, 0, 210, 18, 'F');
+  doc.setTextColor(255, 255, 255);
+  doc.setFontSize(9);
+  doc.setFont('helvetica', 'bold');
+  doc.text('BANCO VOLKSWAGEN S.A. – CARBANK', 14, 7);
+  doc.setFont('helvetica', 'normal');
+  doc.setFontSize(7);
+  doc.text(titulo, 14, 13);
+  doc.setTextColor(0, 0, 0);
+  return 24;
+}
+
+function addFooter(doc) {
+  const pageH = 297;
+  doc.setDrawColor(46, 204, 113);
+  doc.setLineWidth(0.8);
+  doc.line(14, pageH - 14, 196, pageH - 14);
+  doc.setFontSize(7);
+  doc.setTextColor(100, 100, 100);
+  doc.text('Documento gerado eletronicamente – Portal de Credenciamento CarBank / VWFS', 14, pageH - 9);
+  doc.text(new Date().toLocaleDateString('pt-BR'), 175, pageH - 9);
+}
+
+function campo(doc, y, label, valor, x2) {
+  doc.setFontSize(7);
+  doc.setFont('helvetica', 'bold');
+  doc.setTextColor(80, 80, 80);
+  doc.text(label.toUpperCase(), 14, y);
+  doc.setFont('helvetica', 'normal');
+  doc.setTextColor(0, 0, 0);
+  doc.setFontSize(9);
+  doc.text(String(valor || ''), x2 || 14, y + 5);
+  doc.setDrawColor(210, 210, 210);
+  doc.setLineWidth(0.3);
+  doc.line(14, y + 7, 196, y + 7);
+  return y + 11;
+}
+
+function secTitle(doc, y, txt) {
+  doc.setFillColor(240, 247, 255);
+  doc.rect(14, y - 4, 182, 8, 'F');
+  doc.setDrawColor(13, 27, 62);
+  doc.setLineWidth(0.3);
+  doc.rect(14, y - 4, 182, 8, 'S');
+  doc.setFont('helvetica', 'bold');
+  doc.setFontSize(8);
+  doc.setTextColor(13, 27, 62);
+  doc.text(txt, 16, y + 1);
+  doc.setTextColor(0, 0, 0);
+  return y + 10;
+}
+
+// ── 1. FICHA CADASTRAL PJ ──────────────────────────────
+function gerarPDF_Cadastral() {
+  const doc = pdfBase();
+  let y = addHeader(doc, '1. FICHA CADASTRAL – PESSOA JURÍDICA');
+
+  doc.setFont('helvetica', 'bold');
+  doc.setFontSize(13);
+  doc.text('FICHA CADASTRAL – PESSOA JURÍDICA', 105, y, { align: 'center' });
+  y += 10;
+
+  y = secTitle(doc, y, 'PROPONENTE');
+  y = campo(doc, y, 'CNPJ', v('cnpj'));
+  y = campo(doc, y, 'RAZÃO SOCIAL', v('razaoSocial'));
+  y = campo(doc, y, 'RAMO DE ATIVIDADE', v('ramoAtividade'));
+  y = campo(doc, y, 'ATIVIDADE PRINCIPAL / CNAE', v('atividadePrincipal'));
+  y = campo(doc, y, 'ENDEREÇO DA SEDE', `${v('endLoja')}, Nº ${v('numLoja')}${v('complLoja') ? ', Compl: ' + v('complLoja') : ''}`);
+  y = campo(doc, y, 'BAIRRO', v('bairroLoja'));
+  y = campo(doc, y, 'CIDADE / UF / CEP', `${v('cidadeLoja')} / ${v('estadoLoja')} / ${v('cepLoja')}`);
+  y = campo(doc, y, 'TELEFONE', `(${v('dddLoja')}) ${v('telLoja')}`);
+  y = campo(doc, y, 'E-MAIL', v('emailLoja'));
+  y += 2;
+  y = secTitle(doc, y, 'DADOS DA CONSTITUIÇÃO');
+  y = campo(doc, y, 'DATA DE CONSTITUIÇÃO', fmtData(v('dataConstituicao')));
+  y = campo(doc, y, 'FORMA DE CONSTITUIÇÃO', v('formaConstituicao'));
+  y = campo(doc, y, 'FATURAMENTO MÉDIO MENSAL', fmtMoeda(v('faturamento')));
+  y += 2;
+  y = secTitle(doc, y, 'ADMINISTRAÇÃO DA EMPRESA – REPRESENTANTE LEGAL');
+  y = campo(doc, y, 'NOME / RAZÃO SOCIAL', v('repNome'));
+  y = campo(doc, y, 'CPF', v('repCpf'));
+  y = campo(doc, y, 'I / C (Isol./Conj.)', v('repAssina'));
+  y += 2;
+  y = secTitle(doc, y, 'DADOS BANCÁRIOS');
+  y = campo(doc, y, 'BANCO', `${v('bancCod')} – ${v('bancNome')}`);
+  y = campo(doc, y, 'AGÊNCIA', v('bancAgencia'));
+  y = campo(doc, y, 'CONTA CORRENTE', v('bancConta'));
+
+  addFooter(doc);
+  doc.save(`1_Cadastral_PJ_${v('cnpj').replace(/\D/g,'')}.pdf`);
+}
+
+// ── 2. TERMO DE COMPROMISSO ───────────────────────────
+function gerarPDF_Compromisso() {
+  const doc = pdfBase();
+  let y = addHeader(doc, '2. TERMO DE COMPROMISSO – CARBANK');
+
+  doc.setFont('helvetica', 'bold');
+  doc.setFontSize(13);
+  doc.text('TERMO DE COMPROMISSO – CARBANK', 105, y, { align: 'center' });
+  y += 6;
+  doc.setFontSize(10);
+  doc.text('Regularização do Registro do Veículo – Venda de Usados', 105, y, { align: 'center' });
+  y += 10;
+
+  const intro = `Com o objetivo de agilizar o processo de pagamento dos contratos de veículos usados, a Concessionária/Lojista ${v('razaoSocial')}, CNPJ ${v('cnpj')}, declara ter ciência e comprometimento das definições estabelecidas neste Termo com relação às informações apresentadas.`;
+  const lines = doc.splitTextToSize(intro, 182);
+  doc.setFont('helvetica', 'normal');
+  doc.setFontSize(10);
+  doc.text(lines, 14, y);
+  y += lines.length * 6 + 8;
+
+  const itens = [
+    `1. O concessionário/Lojista se compromete, no prazo de 45 (quarenta e cinco) dias da data do pagamento de cada contrato financiado, a providenciar a inclusão do gravame do BANCO VOLKSWAGEN S.A., bem como o registro do veículo no nome do comprador.`,
+    `2. Caso o gravame não seja incluso até o prazo mencionado acima, o Concessionário/Lojista arcará com todo e qualquer prejuízo causado ao BANCO VOLKSWAGEN S.A., ficando sujeito às penalidades previstas em contrato.`,
+    `3. O CORRESPONDENTE compromete-se a manter atualizado o cadastro de dados bancários junto ao BANCO VOLKSWAGEN S.A. para fins de pagamento de comissões.`,
+  ];
+  itens.forEach(item => {
+    const ls = doc.splitTextToSize(item, 182);
+    doc.text(ls, 14, y);
+    y += ls.length * 6 + 6;
+  });
+
+  y += 10;
+  const cidade = v('cidadeLoja');
+  const estado = v('estadoLoja');
+  const hoje = new Date();
+  doc.text(`${cidade} – ${estado}, ${hoje.getDate()} de ${hoje.toLocaleString('pt-BR', {month:'long'})} de ${hoje.getFullYear()}.`, 14, y);
+  y += 20;
+
+  doc.setDrawColor(0, 0, 0);
+  doc.line(14, y, 90, y);
+  doc.line(120, y, 196, y);
+  y += 5;
+  doc.setFontSize(8);
+  doc.text(v('repNome'), 52, y, { align: 'center' });
+  doc.text('Banco Volkswagen S.A.', 158, y, { align: 'center' });
+
+  addFooter(doc);
+  doc.save(`2_Compromisso_${v('cnpj').replace(/\D/g,'')}.pdf`);
+}
+
+// ── 3. TERMO ACELERA ──────────────────────────────────
+function gerarPDF_Acelera() {
+  const doc = pdfBase();
+  let y = addHeader(doc, '3. TERMO DE ANUÊNCIA – PROGRAMA ACELERA');
+
+  doc.setFont('helvetica', 'bold');
+  doc.setFontSize(13);
+  doc.text('TERMO DE ANUÊNCIA – CONCESSIONÁRIA/LOJISTA', 105, y, { align: 'center' });
+  y += 6;
+  doc.setFontSize(11);
+  doc.setTextColor(46, 140, 87);
+  doc.text('PROGRAMA ACELERA', 105, y, { align: 'center' });
+  y += 10;
+  doc.setTextColor(0, 0, 0);
+
+  y = secTitle(doc, y, 'CONCESSIONÁRIA / LOJISTA');
+  doc.setFont('helvetica', 'normal');
+  doc.setFontSize(9);
+  y = campo(doc, y, 'RAZÃO SOCIAL', v('razaoSocial'));
+  y = campo(doc, y, 'CNPJ PRINCIPAL', v('cnpj'));
+  y = campo(doc, y, 'ENDEREÇO', `${v('endLoja')}, Nº ${v('numLoja')}${v('complLoja') ? ', ' + v('complLoja') : ''}`);
+  y = campo(doc, y, 'BAIRRO', v('bairroLoja'));
+  y = campo(doc, y, 'CIDADE / UF', `${v('cidadeLoja')} / ${v('estadoLoja')}`);
+  y = campo(doc, y, 'TELEFONE', `(${v('dddLoja')}) ${v('telLoja')}`);
+  y += 6;
+
+  const texto = `A CONCESSIONÁRIA/LOJISTA acima identificada declara estar de acordo com a participação de todos os integrantes de sua equipe de vendas no Programa Acelera, comprometendo-se a divulgar e incentivar a adesão de seus colaboradores ao referido programa de relacionamento e capacitação promovido pelo BANCO VOLKSWAGEN S.A.
+
+A adesão dos participantes ao Programa é gratuita e será realizada através de cadastro no portal de relacionamento do Programa. A CONCESSIONÁRIA/LOJISTA confirma estar ciente das regras e condições do Programa Acelera.
+
+E assim, por estar de acordo com os termos deste instrumento, CONCESSIONÁRIA/LOJISTA adere ao presente Termo de Anuência.`;
+
+  const ls = doc.splitTextToSize(texto, 182);
+  doc.text(ls, 14, y);
+  y += ls.length * 5.5 + 20;
+
+  doc.line(14, y, 90, y);
+  doc.line(120, y, 196, y);
+  y += 5;
+  doc.setFontSize(8);
+  doc.text(v('razaoSocial'), 52, y, { align: 'center' });
+  doc.text('Banco Volkswagen S.A.', 158, y, { align: 'center' });
+
+  addFooter(doc);
+  doc.save(`3_Acelera_${v('cnpj').replace(/\D/g,'')}.pdf`);
+}
+
+// ── 4. CONTRATO WL CORRESPONDENTE ────────────────────
+function gerarPDF_WL() {
+  const doc = pdfBase();
+  let y = addHeader(doc, '4. CONTRATO DE PRESTAÇÃO DE SERVIÇOS – CORRESPONDENTE NO PAÍS');
+
+  doc.setFont('helvetica', 'bold');
+  doc.setFontSize(12);
+  doc.text('CONTRATO DE PRESTAÇÃO DE SERVIÇOS DE', 105, y, { align: 'center' });
+  y += 6;
+  doc.text('CORRESPONDENTE NO PAÍS', 105, y, { align: 'center' });
+  y += 10;
+  doc.setFont('helvetica', 'normal');
+
+  const intro = `BANCO VOLKSWAGEN S.A., com sede social no Estado de São Paulo, Cidade de São Paulo, na Rua Volkswagen, 291, inscrito no CNPJ/MF sob n.º 59.109.165/0001-49, doravante denominado simplesmente "BANCO"; e ${v('razaoSocial')}, com sede na Cidade de ${v('cidadeLoja')}, Estado de ${v('estadoLoja')}, inscrito no CNPJ/MF sob n.º ${v('cnpj')}, neste ato representado nos termos de seu Contrato Social, doravante ("CORRESPONDENTE");`;
+
+  const ls = doc.splitTextToSize(intro, 182);
+  doc.setFontSize(9);
+  doc.text(ls, 14, y);
+  y += ls.length * 5.5 + 8;
+
+  y = secTitle(doc, y, 'CONSIDERANDO QUE:');
+  const considerandos = [
+    '• As instituições financeiras autorizadas a funcionar pelo Banco Central do Brasil ("BACEN") devem observar as disposições da Resolução 4.935/2021 do Conselho Monetário Nacional ("CMN") e alterações que venham a ser publicadas, como condição para a contratação de correspondentes no País;',
+    '• O CORRESPONDENTE tem por atividade principal a comercialização de veículos e intermediação de operações de financiamento;',
+    '• O lojista tem a intenção de atuar como CORRESPONDENTE do BANCO, de forma não exclusiva, para atingimento desse fim;',
+    '• As Partes desejam estabelecer os termos e condições aplicáveis à prestação dos referidos serviços.',
+  ];
+  considerandos.forEach(c => {
+    const ls2 = doc.splitTextToSize(c, 182);
+    doc.text(ls2, 14, y);
+    y += ls2.length * 5.5 + 4;
+  });
+
+  y += 4;
+  y = secTitle(doc, y, 'DADOS DO CORRESPONDENTE');
+  y = campo(doc, y, 'RAZÃO SOCIAL', v('razaoSocial'));
+  y = campo(doc, y, 'CNPJ', v('cnpj'));
+  y = campo(doc, y, 'ENDEREÇO', `${v('endLoja')}, Nº ${v('numLoja')} – ${v('cidadeLoja')} / ${v('estadoLoja')}`);
+  y = campo(doc, y, 'REPRESENTANTE', v('repNome') + ' – CPF ' + v('repCpf'));
+  y = campo(doc, y, 'E-MAIL USUÁRIO MÁSTER', v('emailLoja'));
+  y += 4;
+  y = secTitle(doc, y, 'DADOS BANCÁRIOS PARA PAGAMENTO');
+  y = campo(doc, y, 'CRÉDITO EM CONTA CORRENTE – BANCO', `${v('bancCod')} – ${v('bancNome')}`);
+  y = campo(doc, y, 'AGÊNCIA', v('bancAgencia'));
+  y = campo(doc, y, 'CONTA CORRENTE', v('bancConta'));
+
+  y += 14;
+  const hoje = new Date();
+  doc.text(`${v('cidadeLoja')} – ${v('estadoLoja')}, ${hoje.getDate()} de ${hoje.toLocaleString('pt-BR', {month:'long'})} de ${hoje.getFullYear()}.`, 14, y);
+  y += 20;
+  doc.line(14, y, 90, y);
+  doc.line(120, y, 196, y);
+  y += 5;
+  doc.setFontSize(8);
+  doc.text(v('repNome'), 52, y, { align: 'center' });
+  doc.text('Banco Volkswagen S.A.', 158, y, { align: 'center' });
+
+  addFooter(doc);
+  doc.save(`4_WL_Correspondente_${v('cnpj').replace(/\D/g,'')}.pdf`);
+}
+
+// ── BAIXAR TODOS (sequencial) ─────────────────────────
+function baixarTodos() {
+  setTimeout(() => gerarPDF_Cadastral(), 0);
+  setTimeout(() => gerarPDF_Compromisso(), 800);
+  setTimeout(() => gerarPDF_Acelera(), 1600);
+  setTimeout(() => gerarPDF_WL(), 2400);
+}
+
+// ══════════════════════════════════════════════════════
+//  EXCEL INPUT
+// ══════════════════════════════════════════════════════
+function baixarExcel() {
+  const wb = XLSX.utils.book_new();
+  const headers = [
+    'RESPONSÁVEL CADASTRO','CHAPA GCM/GR','CNPJ PARCEIROS WHITE LABEL',
+    'INSCRIÇÃO ESTADUAL','CNAE','COD_WHITE_LABEL','Empresa',
+    'NOME COMPLETO GCM / GR','E-MAIL GCM/GR','CNPJ','Regional',
+    'NOME EMPRESARIAL ( CARTÃO CNPJ ) MAX 40 CARACTER',
+    'E-MAIL DO DN INFORMADO NO FORMULÁRIO ATD',
+    'CÓDIGO DO BANCO DN','AGÊNCIA DN','DIGITO AGÊNCIA DN',
+    'CONTA DN','DIGITO CONTA DN','NÚMERO DO ENDEREÇO DN',
+    'COMPLEMENTO','CEP DN','DDD 1','Telefone 1 DN',
+    'DDD 2','Telefone 2 DN','STATUS',
+    'CPF DO CORRESPONDENTE','NOME DO CORRESPONDENTE',
+    'TIPO LOJA','CHAPA COORDENADOR'
+  ];
+
+  // Separar agência e dígito
+  const contaRaw = v('bancConta');
+  const [contaNum, contaDig] = contaRaw.includes('-') ? contaRaw.split('-') : [contaRaw, ''];
+  const agRaw = v('bancAgencia');
+  const [agNum, agDig] = agRaw.includes('-') ? agRaw.split('-') : [agRaw, ''];
+
+  const dados = [
+    '', // RESPONSÁVEL CADASTRO (em branco)
+    v('gcmChapa'),
+    v('cnpj'), // CNPJ PARCEIROS WHITE LABEL
+    v('inscricaoEstadual'),
+    v('cnae'),
+    '', // COD_WHITE_LABEL
+    'LOJISTA WL', // Empresa
+    v('gcmNome'),
+    v('gcmEmail'),
+    v('cnpj'),
+    v('gcmRegional'),
+    v('razaoSocial'),
+    v('emailLoja'),
+    v('bancCod'),
+    agNum.trim(),
+    agDig.trim(),
+    contaNum.trim(),
+    contaDig.trim(),
+    v('numLoja'),
+    v('complLoja'),
+    v('cepLoja').replace('-', ''),
+    v('dddLoja'),
+    v('telLoja').replace(/\D/g,''),
+    '', // DDD 2
+    '', // Telefone 2
+    'ATIVO',
+    v('repCpf'),
+    v('repNome'),
+    v('tipoLoja'),
+    v('gcmCoord')
+  ];
+
+  const ws = XLSX.utils.aoa_to_sheet([headers, dados]);
+  // Largura das colunas
+  ws['!cols'] = headers.map(() => ({ wch: 22 }));
+  XLSX.utils.book_append_sheet(wb, ws, 'Input');
+
+  XLSX.writeFile(wb, `Input_${v('cnpj').replace(/\D/g,'')}.xlsx`);
+}
+
+// ── NOVO PREENCHIMENTO ───────────────────────────────
+function novoPreenchimento() {
+  if (confirm('Limpar todos os dados e começar um novo credenciamento?')) {
+    document.querySelectorAll('input, select, textarea').forEach(el => {
+      if (el.type === 'checkbox') el.checked = false;
+      else el.value = '';
+    });
+    goTo(0);
+  }
+}
+</script>
+</body>
+</html>
